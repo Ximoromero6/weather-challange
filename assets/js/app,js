@@ -1,0 +1,119 @@
+document.addEventListener('DOMContentLoaded', () => {
+    const dropdownButton = document.getElementById('units-button');
+    const dropdownMenu = document.getElementById('units-menu');
+    const menuItems = document.querySelectorAll('.menu__item');
+    const systemToggleButton = document.querySelector('[data-action="toggle-system"]'); // Botón de cambio de sistema
+
+    // Cargar el estado del menú desde localStorage
+    const savedSelections = JSON.parse(localStorage.getItem('unitSelections')) || {
+        temp: 'c', // Celsius por defecto
+        wind: 'kmh', // km/h por defecto
+        precip: 'mm' // mm por defecto
+    };
+
+    // Función para aplicar el estado de selección a los elementos del menú
+    const setSelected = () => {
+        menuItems.forEach(item => {
+            const key = item.getAttribute('data-key');
+            const value = item.getAttribute('data-value');
+            const icon = item.querySelector('i');  // Buscar el ícono dentro del botón
+
+            if (savedSelections[key] === value) {
+                item.classList.add('selected');
+                item.setAttribute('aria-checked', 'true');
+                // Añadir el icono de check a las opciones seleccionadas
+                if (icon) {
+                    icon.classList.add('fi-rr-check');
+                }
+            } else {
+                item.classList.remove('selected');
+                item.setAttribute('aria-checked', 'false');
+                // Eliminar el icono de check si la opción no está seleccionada
+                if (icon) {
+                    icon.classList.remove('fi-rr-check');
+                }
+            }
+        });
+    };
+
+    // Cambiar la selección y guardar en localStorage
+    const handleSelectionChange = (e) => {
+        const item = e.target.closest('.menu__item');  // Aseguramos que capturamos el click en cualquier parte del botón
+        if (!item) return; // Aseguramos que solo se actúe sobre un elemento válido
+
+        const key = item.getAttribute('data-key');
+        const value = item.getAttribute('data-value');
+
+        // Actualizar el estado en el objeto
+        savedSelections[key] = value;
+
+        // Guardar la selección en localStorage
+        localStorage.setItem('unitSelections', JSON.stringify(savedSelections));
+
+        // Actualizar la UI
+        setSelected();
+    };
+
+    // Abrir y cerrar el menú
+    const toggleMenu = () => {
+        const expanded = dropdownButton.getAttribute('aria-expanded') === 'true';
+        dropdownButton.setAttribute('aria-expanded', !expanded);
+        dropdownMenu.style.display = expanded ? 'none' : 'block';
+    };
+
+    // Cerrar el menú si se hace clic fuera
+    const closeMenuIfClickedOutside = (e) => {
+        if (!dropdownButton.contains(e.target) && !dropdownMenu.contains(e.target)) {
+            dropdownButton.setAttribute('aria-expanded', 'false');
+            dropdownMenu.style.display = 'none';
+        }
+    };
+
+    // Cambiar el sistema entre métrico e imperial
+    const toggleSystem = () => {
+        const currentSystem = savedSelections.temp === 'c' ? 'metric' : 'imperial';
+
+        if (currentSystem === 'metric') {
+            savedSelections.temp = 'f';
+            savedSelections.wind = 'mph';
+            savedSelections.precip = 'in';
+            systemToggleButton.textContent = 'Switch to Metric'; // Cambiar texto a 'Switch to Metric'
+        } else {
+            savedSelections.temp = 'c';
+            savedSelections.wind = 'kmh';
+            savedSelections.precip = 'mm';
+            systemToggleButton.textContent = 'Switch to Imperial'; // Cambiar texto a 'Switch to Imperial'
+        }
+
+        // Guardar la selección del sistema en localStorage
+        localStorage.setItem('unitSelections', JSON.stringify(savedSelections));
+
+        // Actualizar la UI
+        setSelected();
+    };
+
+    // Inicializar el estado y eventos
+    setSelected();
+
+    // **Verificar y actualizar el texto del botón al cargar la página**
+    const updateButtonText = () => {
+        const currentSystem = savedSelections.temp === 'c' ? 'metric' : 'imperial';
+        if (currentSystem === 'imperial') {
+            systemToggleButton.textContent = 'Switch to Metric';  // Cambiar a Metric si estamos en Imperial
+        } else {
+            systemToggleButton.textContent = 'Switch to Imperial';  // Cambiar a Imperial si estamos en Metric
+        }
+    };
+
+    // **Llamada para actualizar el texto del botón al cargar**
+    updateButtonText();
+
+    // Eventos
+    dropdownButton.addEventListener('click', toggleMenu);
+    systemToggleButton.addEventListener('click', toggleSystem);
+    menuItems.forEach(item => {
+        item.addEventListener('click', handleSelectionChange); // Añadimos el evento a cada item del menú
+    });
+
+    document.addEventListener('click', closeMenuIfClickedOutside);
+});

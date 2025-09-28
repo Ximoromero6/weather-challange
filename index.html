@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="assets/css/styles.css" />
+    <link rel="shortcut icon" href="assets/images/favicon-32x32.png" type="image/x-icon" />
+    <link rel="stylesheet"
+        href="https://cdn-uicons.flaticon.com/3.0.0/uicons-regular-rounded/css/uicons-regular-rounded.css" />
+
+    <title>Weather App | Ximo Romero</title>
+</head>
+
+<body>
+    <header class="site-header">
+        <div class="brand">
+            <img src="assets/images/logo.svg" alt="" aria-hidden="true" />
+        </div>
+
+        <!-- Dropdown Units -->
+        <div class="dropdown" id="units">
+            <!-- Trigger -->
+            <button class="dropdown__button" id="units-button" aria-haspopup="menu" aria-expanded="false"
+                aria-controls="units-menu">
+                <i class="fi fi-rr-settings"></i>
+                <span>Units</span>
+                <i class="fi fi-rr-angle-small-down"></i>
+            </button>
+
+            <!-- Menu -->
+            <div class="dropdown__menu" id="units-menu" role="menu" aria-labelledby="units-button">
+                <!-- Acción rápida -->
+                <button class="action__button" role="menuitem" data-action="toggle-system">
+                    Switch to Imperial
+                </button>
+
+                <hr class="menu__separator" role="separator" />
+
+                <!-- Sección: Temperatura -->
+                <div class="menu__section" role="group" aria-labelledby="temp-label">
+                    <p class="menu__label" id="temp-label">Temperature</p>
+                    <button class="menu__item" role="menuitemradio" aria-checked="false" data-key="temp" data-value="c">
+                        <p>Celsius (°C)</p>
+                        <i></i>
+                    </button>
+                    <button class="menu__item" role="menuitemradio" aria-checked="false" data-key="temp" data-value="f">
+                        <p>Fahrenheit (°F)</p>
+                        <i></i>
+                    </button>
+                </div>
+
+                <hr class="menu__separator" role="separator" />
+
+                <!-- Sección: Viento -->
+                <div class="menu__section" role="group" aria-labelledby="wind-label">
+                    <p class="menu__label" id="wind-label">Wind Speed</p>
+                    <button class="menu__item" role="menuitemradio" aria-checked="true" data-key="wind"
+                        data-value="kmh">
+                        <p>km/h</p>
+                        <i></i>
+                    </button>
+                    <button class="menu__item" role="menuitemradio" aria-checked="false" data-key="wind"
+                        data-value="mph">
+                        <p>mph</p>
+                        <i></i>
+                    </button>
+                </div>
+
+                <hr class="menu__separator" role="separator" />
+
+                <!-- Sección: Precipitación -->
+                <div class="menu__section" role="group" aria-labelledby="precip-label">
+                    <p class="menu__label" id="precip-label">Precipitation</p>
+                    <button class="menu__item" role="menuitemradio" aria-checked="true" data-key="precip"
+                        data-value="mm">
+                        <p>Millimeters (mm)</p>
+                        <i></i>
+                    </button>
+                    <button class="menu__item" role="menuitemradio" aria-checked="false" data-key="precip"
+                        data-value="in">
+                        <p>Inches (in)</p>
+                        <i></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </header>
+
+    <main id="main" class="app" aria-labelledby="app-title">
+        <h1 id="app-title">How’s the sky looking today?</h1>
+
+        <!-- Buscador -->
+        <section aria-labelledby="search-title" class="search">
+            <h2 id="search-title" class="sr-only">Search for a place</h2>
+            <form role="search" class="search__form" aria-label="Location search">
+                <label class="sr-only" for="q">Search for a place</label>
+                <input id="q" name="q" type="search" placeholder="Search for a place…" autocomplete="off" />
+                <button type="submit">Search</button>
+            </form>
+        </section>
+    </main>
+
+    <script src="assets/js/app,js"></script>
+</body>
+
+</html>
