@@ -15,7 +15,9 @@
 <body>
     <header class="site-header">
         <div class="brand">
-            <img src="assets/images/logo.svg" alt="" aria-hidden="true" />
+            <a href="">
+                <img src="assets/images/logo.svg" alt="" aria-hidden="true" />
+            </a>
         </div>
 
         <!-- Dropdown Units -->
@@ -89,16 +91,27 @@
     </header>
 
     <main id="main" class="app" aria-labelledby="app-title">
-        <h1 id="app-title">How’s the sky looking today?</h1>
+        <h1 class="app-title">How’s the sky looking today?</h1>
 
         <!-- Buscador -->
         <section aria-labelledby="search-title" class="search">
-            <h2 id="search-title" class="sr-only">Search for a place</h2>
-            <form role="search" class="search__form" aria-label="Location search">
-                <label class="sr-only" for="q">Search for a place</label>
-                <input id="q" name="q" type="search" placeholder="Search for a place…" autocomplete="off" />
-                <button type="submit">Search</button>
-            </form>
+            <div class="search__container">
+                <i class="fi fi-rr-search"></i>
+                <input id="query" name="query" type="search" placeholder="Search for a place…" autocomplete="off" />
+            </div>
+            <button type="submit">Search</button>
+        </section>
+
+        <section class="mainLayout">
+            <!-- Contenido principal -->
+            <section class="content" id="content" aria-live="polite" aria-busy="false">
+                <!-- Aquí se inyecta el contenido dinámicamente -->
+            </section>
+
+            <!-- Aside: Previsión horaria -->
+            <aside class="sidebar" id="sidebar" aria-label="Hourly forecast" aria-live="polite" aria-busy="false">
+                <!-- Aquí se inyecta el contenido dinámicamente -->
+            </aside>
         </section>
     </main>
 

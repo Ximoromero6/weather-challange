@@ -31,6 +31,8 @@
   --text-2xl: clamp(1.5rem, 1.2rem + 1.2vw, 2rem);
   --text-3xl: clamp(2rem, 1.5rem + 2vw, 2.75rem);
   --text-md: .8rem;
+  --text-lg: 1rem;
+  --text-xl: 1.25rem;
 }
 
 body {
@@ -44,12 +46,97 @@ body {
   padding: clamp(1rem, 2vw, 2rem);
   max-width: 1280px;
   margin-inline: auto;
+  /* --- Título --- */
+}
+.app .app-title {
+  text-align: center;
+  font-weight: 700;
+  font-size: var(--text-3xl);
+  line-height: 1.15;
+  color: var(--color-text);
+  margin-block: var(--space-2) var(--space-3);
+  font-family: "Bricolage Grotesque", sans-serif;
+}
+.app .search {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--space-3);
+  margin: var(--space-7);
+  flex-wrap: wrap;
+}
+.app .search__container {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+  background-color: var(--color-surface);
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: 0 var(--space-4);
+  border: 2px solid transparent;
+  transition: border-color 0.1s ease;
+}
+.app .search__container i {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--text-md);
+  color: var(--color-subtle-text);
+}
+.app .search__container input {
+  width: 100%;
+  padding: var(--space-2) 0;
+  border: none;
+  background-color: transparent;
+  color: var(--color-text);
+  font-size: var(--text-lg);
+  font-family: "DM Sans", sans-serif;
+}
+.app .search__container input::-moz-placeholder {
+  color: var(--color-subtle-text);
+  font-family: "DM Sans", sans-serif;
+}
+.app .search__container input::placeholder {
+  color: var(--color-subtle-text);
+  font-family: "DM Sans", sans-serif;
+}
+.app .search__container input:focus {
+  outline: none;
+}
+.app .search__container:hover {
+  background-color: var(--color-surface-alt);
+}
+.app .search__container:focus-within {
+  border-color: var(--color-subtle-text);
+}
+.app .search button[type=submit] {
+  background-color: var(--color-primary);
+  color: var(--color-primary-contrast);
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: var(--space-2) var(--space-4);
+  font-size: var(--text-lg);
+  font-family: "DM Sans", sans-serif;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: background-color 0.3s ease;
+}
+.app .search button[type=submit]:hover {
+  background-color: hsl(233, 67%, 46%);
+}
+.app .search button[type=submit]:focus {
+  outline: 1px solid var(--color-primary);
+  outline-offset: 2px;
+}
+.app .mainLayout {
   display: grid;
   gap: var(--space-6);
   /* 2 columnas en desktop: contenido + aside horario */
 }
 @media (min-width: 1024px) {
-  .app {
+  .app .mainLayout {
     grid-template-columns: 1fr 360px;
     align-items: start;
   }
@@ -163,16 +250,4 @@ body {
   color: var(--color-subtle-text);
   font-size: var(--text-md);
   margin: 0 var(--space-2);
-}
-
-/* --- Título --- */
-#app-title {
-  text-align: center;
-  font-weight: 700;
-  font-size: var(--text-3xl);
-  line-height: 1.15;
-  color: var(--color-text);
-  margin-block: var(--space-2) var(--space-3);
-}
-
-/* --- Buscador --- *//*# sourceMappingURL=styles.css.map */
+}/*# sourceMappingURL=styles.css.map */
