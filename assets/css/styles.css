@@ -15,7 +15,7 @@
   --color-text: hsl(0, 0%, 100%);
   --color-subtle-text: hsl(240, 6%, 70%);
   --color-primary: hsl(233, 67%, 56%);
-  --color-primary-contrast: #fff;
+  --color-primary-contrast: hsl(233, 67%, 46%);
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 16px;
@@ -33,6 +33,7 @@
   --text-md: .8rem;
   --text-lg: 1rem;
   --text-xl: 1.25rem;
+  --highlight-color: hsl(30, 100%, 52%);
 }
 
 body {
@@ -64,6 +65,7 @@ body {
   gap: var(--space-3);
   margin: var(--space-7);
   flex-wrap: wrap;
+  position: relative;
 }
 .app .search__container {
   position: relative;
@@ -75,8 +77,9 @@ body {
   align-items: center;
   gap: var(--space-3);
   padding: 0 var(--space-4);
-  border: 2px solid transparent;
+  border: 1px solid transparent;
   transition: border-color 0.1s ease;
+  /* No afecte a los resultados, solo al input */
 }
 .app .search__container i {
   display: flex;
@@ -105,6 +108,13 @@ body {
 .app .search__container input:focus {
   outline: none;
 }
+.app .search__container input::-webkit-search-cancel-button {
+  /*  -webkit-appearance: none;
+  height: 10px;
+  width: 10px;
+  background: red;
+  cursor: pointer; */
+}
 .app .search__container:hover {
   background-color: var(--color-surface-alt);
 }
@@ -113,7 +123,7 @@ body {
 }
 .app .search button[type=submit] {
   background-color: var(--color-primary);
-  color: var(--color-primary-contrast);
+  color: var(--color-text);
   border: none;
   border-radius: var(--radius-sm);
   padding: var(--space-2) var(--space-4);
@@ -124,11 +134,82 @@ body {
   transition: background-color 0.3s ease;
 }
 .app .search button[type=submit]:hover {
-  background-color: hsl(233, 67%, 46%);
+  background-color: var(--color-primary-contrast);
 }
 .app .search button[type=submit]:focus {
   outline: 1px solid var(--color-primary);
   outline-offset: 2px;
+}
+.app .search__results {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 10;
+  margin-top: var(--space-3);
+  padding: var(--space-2);
+  pointer-events: auto;
+  display: none;
+  flex-direction: column;
+  /* Track */
+  /* Handle */
+  /* Evitar que el hover en el contenedor principal afecte a los resultados */
+}
+.app .search__results::-webkit-scrollbar {
+  width: var(--space-1);
+  background-color: var(--color-surface);
+  border-top-right-radius: var(--radius-lg);
+  border-bottom-right-radius: var(--radius-lg);
+}
+.app .search__results::-webkit-scrollbar-track {
+  background-color: var(--color-surface);
+  border-top-right-radius: var(--radius-lg);
+  border-bottom-right-radius: var(--radius-lg);
+}
+.app .search__results::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: var(--radius-lg);
+}
+.app .search__results__container:hover .app .search__results {
+  pointer-events: none;
+}
+.app .search__results .loading {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.app .search__results .loading i {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  animation: spin 0.5s linear infinite;
+}
+.app .search__results .loading p {
+  color: var(--color-text);
+  font-size: var(--text-lg);
+}
+.app .search__results .result-item {
+  border-radius: var(--radius-sm);
+  padding: var(--space-2);
+  cursor: pointer;
+  color: var(--color-text);
+  border: 1px solid transparent;
+  position: relative;
+  z-index: 20;
+  font-size: var(--text-lg);
+}
+.app .search__results .result-item:hover {
+  border-color: var(--color-border);
+  background-color: var(--color-surface-alt);
+}
+.app .search__results .highlight {
+  color: var(--highlight-color);
+  font-weight: 500;
 }
 .app .mainLayout {
   display: grid;
@@ -250,4 +331,13 @@ body {
   color: var(--color-subtle-text);
   font-size: var(--text-md);
   margin: 0 var(--space-2);
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }/*# sourceMappingURL=styles.css.map */

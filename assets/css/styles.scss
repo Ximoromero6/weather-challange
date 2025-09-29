@@ -15,7 +15,7 @@
     --color-text: hsl(0, 0%, 100%);
     --color-subtle-text: hsl(240, 6%, 70%);
     --color-primary: hsl(233, 67%, 56%);
-    --color-primary-contrast: #fff;
+    --color-primary-contrast: hsl(233, 67%, 46%);
     --radius-sm: 8px;
     --radius-md: 12px;
     --radius-lg: 16px;
@@ -33,6 +33,7 @@
     --text-md: .8rem;
     --text-lg: 1rem;
     --text-xl: 1.25rem;
+    --highlight-color: hsl(30, 100%, 52%);
 }
 
 body {
@@ -65,6 +66,7 @@ body {
         gap: var(--space-3);
         margin: var(--space-7);
         flex-wrap: wrap;
+        position: relative;
 
         &__container {
             position: relative;
@@ -76,8 +78,8 @@ body {
             align-items: center;
             gap: var(--space-3);
             padding: 0 var(--space-4);
-            border: 2px solid transparent;
-            transition: border-color 0.1s ease; // Añadir transición suave al cambio del borde
+            border: 1px solid transparent;
+            transition: border-color 0.1s ease;
 
             i {
                 display: flex;
@@ -104,8 +106,17 @@ body {
                 &:focus {
                     outline: none;
                 }
+
+                &::-webkit-search-cancel-button {
+                    /*  -webkit-appearance: none;
+                    height: 10px;
+                    width: 10px;
+                    background: red;
+                    cursor: pointer; */
+                }
             }
 
+            /* No afecte a los resultados, solo al input */
             &:hover {
                 background-color: var(--color-surface-alt);
             }
@@ -117,7 +128,7 @@ body {
 
         button[type="submit"] {
             background-color: var(--color-primary);
-            color: var(--color-primary-contrast);
+            color: var(--color-text);
             border: none;
             border-radius: var(--radius-sm);
             padding: var(--space-2) var(--space-4);
@@ -128,7 +139,7 @@ body {
             transition: background-color 0.3s ease;
 
             &:hover {
-                background-color: hsl(233, 67%, 46%);
+                background-color: var(--color-primary-contrast);
             }
 
             &:focus {
@@ -136,8 +147,89 @@ body {
                 outline-offset: 2px;
             }
         }
-    }
 
+        &__results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background-color: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-sm);
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 10;
+            margin-top: var(--space-3);
+            padding: var(--space-2);
+            pointer-events: auto;
+            display: none;
+            flex-direction: column;
+
+            &::-webkit-scrollbar {
+                width: var(--space-1);
+                background-color: var(--color-surface);
+                border-top-right-radius: var(--radius-lg);
+                border-bottom-right-radius: var(--radius-lg);
+            }
+
+            /* Track */
+            &::-webkit-scrollbar-track {
+                background-color: var(--color-surface);
+                border-top-right-radius: var(--radius-lg);
+                border-bottom-right-radius: var(--radius-lg);
+            }
+
+            /* Handle */
+            &::-webkit-scrollbar-thumb {
+                background: var(--color-border);
+                border-radius: var(--radius-lg);
+            }
+
+            /* Evitar que el hover en el contenedor principal afecte a los resultados */
+            &__container:hover & {
+                pointer-events: none;
+            }
+
+            .loading {
+                display: flex;
+                align-items: center;
+                gap: var(--space-2);
+
+                i {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    animation: spin .5s linear infinite;
+                }
+
+                p {
+                    color: var(--color-text);
+                    font-size: var(--text-lg);
+                }
+            }
+
+            .result-item {
+                border-radius: var(--radius-sm);
+                padding: var(--space-2);
+                cursor: pointer;
+                color: var(--color-text);
+                border: 1px solid transparent;
+                position: relative;
+                z-index: 20;
+                font-size: var(--text-lg);
+
+                &:hover {
+                    border-color: var(--color-border);
+                    background-color: var(--color-surface-alt);
+                }
+            }
+
+            .highlight {
+                color: var(--highlight-color);
+                font-weight: 500;
+            }
+        }
+    }
 
     .mainLayout {
         display: grid;
@@ -267,5 +359,15 @@ body {
                 }
             }
         }
+    }
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
     }
 }
