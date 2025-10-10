@@ -102,23 +102,109 @@
                 <div id="search-results" class="search__results">
                 </div>
             </div>
-            <button type="submit">Search</button>
+            <button type="submit" id="search-button">Search</button>
         </section>
 
         <section class="mainLayout">
             <!-- Contenido principal -->
-            <section class="content" id="content" aria-live="polite" aria-busy="false">
-                <!-- Aquí se inyecta el contenido dinámicamente -->
+            <section class="weather" id="weather" aria-live="polite" aria-busy="false">
+                <div class="weather__main skeleton">
+                    <div class="weather__location skeleton-box">
+                        <p>Loading...</p>
+                    </div>
+                </div>
+
+                <div class="weather__details">
+                    <div class="detail skeleton-box">
+                        <p>Feels like</p>
+                        <p class="detail-feels">-</p>
+                    </div>
+                    <div class="detail skeleton-box">
+                        <p>Humidity</p>
+                        <p class="detail-humidity">-</p>
+                    </div>
+                    <div class="detail skeleton-box">
+                        <p>Wind</p>
+                        <p class="detail-wind">-</p>
+                    </div>
+                    <div class="detail skeleton-box">
+                        <p>Precipitation</p>
+                        <p class="detail-precipitation">-</p>
+                    </div>
+                </div>
+
+                <div class="forecast">
+                    <h3>Daily forecast</h3>
+                    <div class="forecast__content">
+                        <div class="forecast-item skeleton-box"></div>
+                        <div class="forecast-item skeleton-box"></div>
+                        <div class="forecast-item skeleton-box"></div>
+                        <div class="forecast-item skeleton-box"></div>
+                        <div class="forecast-item skeleton-box"></div>
+                        <div class="forecast-item skeleton-box"></div>
+                        <div class="forecast-item skeleton-box"></div>
+                    </div>
+                </div>
             </section>
 
             <!-- Aside: Previsión horaria -->
             <aside class="sidebar" id="sidebar" aria-label="Hourly forecast" aria-live="polite" aria-busy="false">
-                <!-- Aquí se inyecta el contenido dinámicamente -->
+                <div class="sidebar__header">
+                    <h3>Hourly forecast</h3>
+
+                    <div class="dropdown" id="hourly-opts">
+                        <button class="dropdown__button" id="hourly-button" aria-haspopup="menu" aria-expanded="false"
+                            aria-controls="day-menu">
+                            <span>–</span>
+                            <i class="fi fi-rr-angle-small-down"></i>
+                        </button>
+                        <div class="dropdown__menu" id="day-menu" role="menu" aria-labelledby="hourly-button">
+                            <button class="menu__item" role="menuitemradio" aria-checked="true" data-key="day"
+                                data-value="monday">
+                                <p>Monday</p>
+                            </button>
+                            <button class="menu__item" role="menuitemradio" aria-checked="false" data-key="day"
+                                data-value="tuesday">
+                                <p>Tuesday</p>
+                            </button>
+                            <button class="menu__item" role="menuitemradio" aria-checked="false" data-key="day"
+                                data-value="wednesday">
+                                <p>Wednesday</p>
+                            </button>
+                            <button class="menu__item" role="menuitemradio" aria-checked="false" data-key="day"
+                                data-value="thursday">
+                                <p>Thursday</p>
+                            </button>
+                            <button class="menu__item" role="menuitemradio" aria-checked="false" data-key="day"
+                                data-value="friday">
+                                <p>Friday</p>
+                            </button>
+                            <button class="menu__item" role="menuitemradio" aria-checked="false" data-key="day"
+                                data-value="saturday">
+                                <p>Saturday</p>
+                            </button>
+                            <button class="menu__item" role="menuitemradio" aria-checked="false" data-key="day"
+                                data-value="sunday">
+                                <p>Sunday</p>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="sidebar__content">
+                    <div class="hourly__item"></div>
+                    <div class="hourly__item"></div>
+                    <div class="hourly__item"></div>
+                    <div class="hourly__item"></div>
+                    <div class="hourly__item"></div>
+                    <div class="hourly__item"></div>
+                    <div class="hourly__item"></div>
+                    <div class="hourly__item"></div>
+                </div>
             </aside>
         </section>
     </main>
 
-    <script src="assets/js/app,js"></script>
+    <script src="assets/js/app.js"></script>
 </body>
 
 </html>
