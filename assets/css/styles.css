@@ -68,6 +68,14 @@ body {
   flex-wrap: wrap;
   position: relative;
 }
+@media (max-width: 576px) {
+  .app .search {
+    margin: var(--space-5) 0;
+  }
+  .app .search button[type=submit] {
+    width: 100%;
+  }
+}
 .app .search__container {
   position: relative;
   width: 100%;
@@ -212,6 +220,25 @@ body {
 .app .mainLayout > * {
   min-width: 0;
 }
+@media (max-width: 992px) {
+  .app .mainLayout {
+    flex-direction: column;
+  }
+  .app .mainLayout .weather__main {
+    flex-direction: column;
+  }
+  .app .mainLayout .weather__main .weather__location {
+    align-items: center;
+    text-align: center;
+  }
+}
+@media (max-width: 576px) {
+  .app .mainLayout .weather__details {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+  }
+}
 .app .mainLayout .weather {
   flex: 2;
   display: flex;
@@ -296,6 +323,12 @@ body {
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
+}
+@media (max-width: 576px) {
+  .app .mainLayout .weather .forecast__content {
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
 }
 .app .mainLayout .weather .forecast > h3 {
   margin: 0;
