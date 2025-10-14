@@ -154,7 +154,7 @@
         }
     };
 
-    const makeHourlyItem = (label, idx, hourly, tz) => {
+    const makeHourlyItem = (label, idx, hourly) => {
         const el = document.createElement("div");
         el.className = "hourly__item";
         el.innerHTML = `
@@ -171,40 +171,88 @@
     const renderHourly = (hourly, tz) => {
         hourlyWrap.innerHTML = "";
 
-        const now = new Date();
-        const tzNow = new Date(now.toLocaleString("en-US", { timeZone: tz }));
+        const selectedDay = localStorage.getItem("hourlySelectedDay") || todayWeekday;
 
-        let startIdx = hourly.time.findIndex((t) => new Date(t) >= tzNow);
-        if (startIdx < 0) startIdx = 0;
+        // Convierte todas las horas al timezone local del lugar
+        const hours = hourly.time.map((t) => new Date(t).toLocaleString("en-US", { timeZone: tz }));
+        const selectedDayData = [];
 
-        hourlyWrap.appendChild(makeHourlyItem("Now", startIdx, hourly, tz));
-
-        for (let i = startIdx + 1; i < hourly.time.length && i < startIdx + 8; i++) {
-            const label = fmtTime(hourly.time[i], tz);
-            hourlyWrap.appendChild(makeHourlyItem(label, i, hourly, tz));
+        // Filtra las horas que pertenecen al día seleccionado
+        for (let i = 0; i < hours.length; i++) {
+            const d = new Date(hours[i]);
+            const weekday = new Intl.DateTimeFormat("en-US", { weekday: "long" }).format(d).toLowerCase();
+            if (weekday === selectedDay) selectedDayData.push(i);
         }
+
+        const indices = selectedDayData.length ? selectedDayData : [...Array(hours.length).keys()];
+        const isToday = selectedDay === todayWeekday;
+
+        // Renderiza las horas filtradas
+        indices.slice(0, 8).forEach((idx, i) => {
+            let label;
+            if (i === 0 && isToday) {
+                label = "Now";
+            } else {
+                label = fmtTime(hourly.time[idx], tz);
+            }
+            hourlyWrap.appendChild(makeHourlyItem(label, idx, hourly));
+        });
 
         sidebar.classList.remove("skeleton");
     };
 
+
+
     // -------------------------------
     // Fetch
     // -------------------------------
+    // --- Función segura de fetch con control de error ---
     const fetchForecast = async (lat, lon, tz) => {
-        const u = apiUnits();
-        const params = new URLSearchParams({
-            latitude: lat,
-            longitude: lon,
-            timezone: tz || "auto",
-            current:
-                "temperature_2m,apparent_temperature,relative_humidity_2m,precipitation,weather_code,windspeed_10m,is_day",
-            hourly: "temperature_2m,precipitation,weather_code",
-            daily: "weather_code,temperature_2m_max,temperature_2m_min",
-            ...u,
-        });
-        const res = await fetch(`https://api.open-meteo.com/v1/forecast?${params}`);
-        return res.json();
+        try {
+            const u = apiUnits();
+            const params = new URLSearchParams({
+                latitude: lat,
+                longitude: lon,
+                timezone: tz || "auto",
+                current:
+                    "temperature_2m,apparent_temperature,relative_humidity_2m,precipitation,weather_code,windspeed_10m,is_day",
+                hourly: "temperature_2m,precipitation,weather_code",
+                daily: "weather_code,temperature_2m_max,temperature_2m_min",
+                ...u,
+            });
+
+            const res = await fetch(`https://api.open-meteo.com/v1/forecast?${params}`);
+            if (!res.ok) throw new Error(`API error: ${res.status}`);
+            return await res.json();
+
+        } catch (err) {
+            console.error("Forecast fetch failed:", err);
+            showErrorScreen("We couldn’t connect to the server (API error). Please try again in a few moments.");
+            throw err;
+        }
     };
+
+    // --- Renderizado del error ---
+    const showErrorScreen = (message) => {
+        // Limpia contenido actual
+        document.getElementById("main").innerHTML = `
+    <div class="error-screen">
+      <div class="error-content">
+        <i class="fi fi-rr-ban forbidden"></i>
+        <h2>Something went wrong</h2>
+        <p>${message}</p>
+        <button id="retryBtn" class="retry-btn">
+            <i class="fi fi-rr-rotate-right"></i>
+            <p>Retry</p
+        </button>
+      </div>
+    </div>
+  `;
+
+        // Botón de recarga
+        document.getElementById("retryBtn").addEventListener("click", () => location.reload());
+    };
+
 
     // -------------------------------
     // Búsqueda: loader + highlight
@@ -231,9 +279,7 @@
 
         try {
             const res = await fetch(
-                `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(
-                    query
-                )}&language=en&count=8&format=json`
+                `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(query)}&language=en&count=8&format=json`
             );
             const data = await res.json();
 
@@ -261,26 +307,22 @@
         }
     };
 
-    queryInput.addEventListener("input", (e) => {
-        const q = e.target.value.trim();
-        fetchCities(q);
-    });
-
-    searchButton.addEventListener("click", async () => {
-        if (!selectedCity) return;
-        const { latitude: lat, longitude: lon, name, country, timezone } = selectedCity;
-        setBusy(weatherSection, true);
-        setBusy(sidebar, true);
-        const forecast = await fetchForecast(lat, lon, timezone);
-        renderAll(selectedCity, forecast);
-        localStorage.setItem("lastLocation", JSON.stringify(selectedCity));
-        queryInput.value = "";
-    });
+    queryInput.addEventListener("input", (e) => fetchCities(e.target.value.trim()));
 
     // -------------------------------
     // Render general
     // -------------------------------
     const renderAll = (place, forecast) => {
+        // Fondo dinámico (solo tras carga)
+        const mainSection = document.querySelector(".weather__main");
+        if (window.innerWidth >= 992) {
+            mainSection.style.backgroundImage = 'url("assets/images/bg-today-large.svg")';
+        } else if (window.innerWidth < 576) {
+            mainSection.style.backgroundImage = 'url("assets/images/bg-today-small.svg")';
+        } else {
+            mainSection.style.backgroundImage = "none";
+        }
+
         lastCoords = place;
         lastForecast = forecast;
         renderMainCard(place, forecast.current);
@@ -292,12 +334,29 @@
     };
 
     // -------------------------------
+    // Búsqueda principal
+    // -------------------------------
+    searchButton.addEventListener("click", async () => {
+        if (!selectedCity) return;
+        const { latitude: lat, longitude: lon, timezone } = selectedCity;
+
+        setBusy(weatherSection, true);
+        setBusy(sidebar, true);
+        document.querySelector(".weather__main").style.backgroundImage = "none";
+
+        const forecast = await fetchForecast(lat, lon, timezone);
+        renderAll(selectedCity, forecast);
+        localStorage.setItem("lastLocation", JSON.stringify(selectedCity));
+        queryInput.value = "";
+    });
+
+    // -------------------------------
     // Dropdowns y unidades
     // -------------------------------
     const setSelectedUnits = () => {
         menuItems.forEach((item) => {
-            const key = item.getAttribute("data-key");
-            const value = item.getAttribute("data-value");
+            const key = item.dataset.key;
+            const value = item.dataset.value;
             const isSelected = savedSelections[key] === value;
             item.classList.toggle("selected", isSelected);
             item.setAttribute("aria-checked", isSelected ? "true" : "false");
@@ -315,8 +374,8 @@
     const handleSelectionChange = async (e) => {
         const item = e.target.closest(".menu__item");
         if (!item) return;
-        const key = item.getAttribute("data-key");
-        const value = item.getAttribute("data-value");
+        const key = item.dataset.key;
+        const value = item.dataset.value;
         savedSelections[key] = value;
         localStorage.setItem("unitSelections", JSON.stringify(savedSelections));
         setSelectedUnits();
@@ -371,7 +430,10 @@
         hourlyLabel.textContent = cap(normalized);
         localStorage.setItem("hourlySelectedDay", normalized);
 
-        if (lastForecast) renderHourly(lastForecast.hourly, lastForecast.timezone);
+        if (lastForecast) {
+            renderHourly(lastForecast.hourly, lastForecast.timezone);
+        }
+
     };
 
     const handleDaySelection = (e) => {
@@ -409,10 +471,8 @@
     dropdownButton.addEventListener("click", toggleMenuUnits);
     systemToggleButton.addEventListener("click", toggleSystem);
     menuItems.forEach((item) => item.addEventListener("click", handleSelectionChange));
-
     dropdownHourlyButton.addEventListener("click", toggleMenuHourly);
     hourlyItems.forEach((item) => item.addEventListener("click", handleDaySelection));
-
     document.addEventListener("click", closeOnOutsideClick);
 
     // -------------------------------
@@ -421,12 +481,19 @@
     const boot = async () => {
         setSelectedUnits();
         updateSystemButtonText();
-        setDaySelected(savedDay);
+
+        const today = new Intl.DateTimeFormat(undefined, { weekday: "long" })
+            .format(new Date())
+            .toLowerCase();
 
         const saved = JSON.parse(localStorage.getItem("lastLocation"));
+        const selectedDay = localStorage.getItem("hourlySelectedDay") || today;
+        setDaySelected(selectedDay);
+
         if (saved?.latitude && saved?.longitude) {
             setBusy(weatherSection, true);
             setBusy(sidebar, true);
+            document.querySelector(".weather__main").style.backgroundImage = "none";
             const forecast = await fetchForecast(saved.latitude, saved.longitude, saved.timezone);
             renderAll(saved, forecast);
         }

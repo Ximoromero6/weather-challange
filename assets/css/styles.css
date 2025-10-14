@@ -72,6 +72,9 @@ body {
   .app .search {
     margin: var(--space-5) 0;
   }
+  .app .search__container {
+    max-width: none !important;
+  }
   .app .search button[type=submit] {
     width: 100%;
   }
@@ -257,7 +260,8 @@ body {
   align-items: center;
   justify-content: space-between;
   padding: var(--space-6);
-  background-image: url("../images/bg-today-large.svg");
+  background-image: none;
+  transition: background-image 0.3s ease-in-out;
   background-repeat: no-repeat;
   background-size: cover;
 }
@@ -275,6 +279,34 @@ body {
   font-size: var(--text-lg);
   color: var(--color-subtle-text);
   font-weight: 600;
+}
+.app .mainLayout .weather__main .weather__location.skeleton-box {
+  margin: auto;
+}
+.app .mainLayout .weather__main .weather__location.skeleton-box .loader {
+  width: 60px;
+  aspect-ratio: 2;
+  --_g: no-repeat radial-gradient(circle closest-side, #fff 90%, #0000);
+  background: var(--_g) 0% 50%, var(--_g) 50% 50%, var(--_g) 100% 50%;
+  background-size: 33.3333333333% 50%;
+  animation: l3 1s infinite linear;
+}
+@keyframes l3 {
+  20% {
+    background-position: 0% 0%, 50% 50%, 100% 50%;
+  }
+  40% {
+    background-position: 0% 100%, 50% 0%, 100% 50%;
+  }
+  60% {
+    background-position: 0% 50%, 50% 100%, 100% 0%;
+  }
+  80% {
+    background-position: 0% 50%, 50% 50%, 100% 100%;
+  }
+}
+.app .mainLayout .weather__main .weather__location.skeleton-box p {
+  text-align: center;
 }
 .app .mainLayout .weather__main .weather__now {
   display: flex;
@@ -296,6 +328,11 @@ body {
 .app .mainLayout .weather__details {
   display: flex;
   gap: var(--space-5);
+}
+@media (max-width: 576px) {
+  .app .mainLayout .weather__details {
+    gap: var(--space-4);
+  }
 }
 .app .mainLayout .weather__details .detail {
   background: var(--color-surface);
@@ -326,8 +363,14 @@ body {
 }
 @media (max-width: 576px) {
   .app .mainLayout .weather .forecast__content {
+    display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
+    gap: var(--space-3);
+  }
+  .app .mainLayout .weather .forecast .forecast-item {
+    flex: 1 1 calc(33.333% - var(--space-3));
+    max-width: calc(33.333% - var(--space-3));
   }
 }
 .app .mainLayout .weather .forecast > h3 {
@@ -508,6 +551,7 @@ body {
   align-items: center;
   justify-content: space-between;
   padding: 0 var(--space-4);
+  /*  min-height: 65px; */
 }
 .app .mainLayout .sidebar__content .hourly__item .hourly__left {
   display: flex;
@@ -638,6 +682,59 @@ body {
   color: var(--color-subtle-text);
   font-size: var(--text-md);
   margin: 0 var(--space-2);
+}
+
+.error-screen {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.error-screen .error-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: var(--space-4);
+}
+.error-screen .error-content i.forbidden {
+  font-size: var(--text-2xl);
+  color: var(--color-subtle-text);
+}
+.error-screen .error-content h2 {
+  font-size: var(--text-2xl);
+  color: var(--color-text);
+}
+.error-screen .error-content p {
+  font-size: var(--text-lg);
+  color: var(--color-subtle-text);
+  text-align: center;
+  max-width: 400px;
+}
+.error-screen .error-content .retry-btn {
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-sm);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--space-3);
+  border: none;
+  background-color: var(--color-surface-alt);
+  cursor: pointer;
+}
+.error-screen .error-content .retry-btn:hover {
+  background-color: var(--color-border);
+}
+.error-screen .error-content .retry-btn i {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--color-text);
+  font-size: var(--text-md);
+}
+.error-screen .error-content .retry-btn p {
+  font-size: var(--text-lg);
+  color: var(--color-text);
+  font-family: "DM Sans", sans-serif;
 }
 
 @keyframes spin {
